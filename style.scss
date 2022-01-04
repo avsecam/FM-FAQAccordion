@@ -9,12 +9,18 @@ $softViolet: hsl(273, 75%, 66%);
 $softBlue: hsl(240, 73%, 65%);
 
 // NEUTRAL TEXT
-$gray: hsl(237, 12%, 33%);
-$darkGray: hsl(240, 6%, 50%);
+$darkGray: hsl(237, 12%, 33%);
+$gray: hsl(240, 6%, 50%);
 
 // DIVIDER
 $lightGray: hsl(240, 5%, 91%);
 
+
+@mixin centerChildren {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
 
 * {
 	font-family: "Kumbh Sans", sans-serif;
@@ -25,14 +31,27 @@ $lightGray: hsl(240, 5%, 91%);
 	color: $desatBlue;
 }
 
+::-webkit-scrollbar {
+	width: 0.5rem;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+	border-radius: 0.5rem;
+  background: #eee;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #ddd;
+}
+
 body {
-	display: flex;
+	@include centerChildren();
 	flex-direction: column;
-	justify-content: center;
-	align-items: center;
 	height: 100vh;
 	background: no-repeat linear-gradient($softViolet, $softBlue) fixed;
 	background-size: cover;
+	overflow: auto hidden;
 }
 
 main {
@@ -40,32 +59,64 @@ main {
 	display: flex;
 	flex-direction: row;
 	width: 60vw;
+	min-width: 880px;
 	height: 65vh;
+	min-height: 420px;
 	border-radius: 1.5rem;
 	box-shadow: 0 2rem 3rem -0.5rem rgba(0, 0, 0, 0.3);
+	position: fixed;
 }
+
 
 .hero {
 	flex: 1;
-	background: no-repeat url("./images/illustration-woman-online-desktop.svg");
-	background-size: 100%;
-	background-position: left -56px center;
+	overflow: hidden;
+	
+	* {
+		position: relative;
+		right: 50px;
+		width: 100%; height: 100%;
+		background-position: center right 0;
+		background-repeat: no-repeat;
+	}
+}
+.hero__bg {
+	background-image: url("./images/bg-pattern-desktop.svg");
+	background-position: top 65% right 0;
+}
+.hero__fg {
+	top: -100%;
+	background-image: url("./images/illustration-woman-online-desktop.svg");
+}
+.hero__box {
+	position: absolute;
+	background-image: url("./images/illustration-box-desktop.svg");
+	width: 200px;
+	height: 200px;
+	left: -110px;
+	top: 38%;
 }
 
 .content {
 	flex: 1;
+	margin-bottom: 3rem;
 
 	h1 {
-		font-size: 2rem;
+		font-size: 2.5rem;
 		font-weight: 700;
-		margin-top: 3.5rem;
-		margin-bottom: 3rem;
+		margin-top: 5rem;
+		margin-bottom: 2rem;
+	}
+
+	ul {
+		overflow-y: auto;
+    height: 65%;
+    padding: 0;
+    margin-right: 5rem;
 	}
 }
 
-ul {
-	padding: 0;
-}
+
 
 .accordion {
 	position: relative;
@@ -73,7 +124,7 @@ ul {
 	border-bottom: 1px solid $lightGray;
 	padding: 15px 0;
 	margin: 0;
-	margin-right: 8rem;
+	margin-right: 1.5rem;
 	
 	input {
 		opacity: 0;
@@ -84,17 +135,6 @@ ul {
 		cursor: pointer;
 	}
 
-	
-
-	&__a {
-		max-height: 0;
-		overflow: hidden;
-		transition: 0.5s;
-	}
-
-	&:hover {
-	}
-
 	&:hover &__q{
 		color: $softRed;
 	}
@@ -102,11 +142,94 @@ ul {
 	input:checked + &__q {
 		font-weight: 700;
 		color: $desatBlue;
+
+		&::after {
+			transform: rotate(180deg);
+		}
 	}
 	input:checked + &__q + &__a {
-		max-height: 3rem;
+		max-height: 5rem;
 		height: fit-content;
 		padding-top: 1rem;
+	}	
+}
+
+.accordion__q {
+	font-size: 1.1rem;
+}
+
+.accordion__q::after {
+	content: "";
+	position: absolute;
+	transform: rotate(0deg);
+	background: no-repeat url("./images/icon-arrow-down.svg");
+	width: 10px; height: 6px;
+	top: 18px; right: 0px;
+	transition: 0.5s;
+}
+
+.accordion__a {
+	max-height: 0;
+	overflow: hidden;
+	color: $gray;
+	transition: 0.5s;
+}
+
+@media (max-aspect-ratio: 1/1) {
+
+	main {
+		flex-direction: column;
+		width: 90vw; height: 70vh;
+		margin-top: 5rem;
+		min-width: 0; min-height: 0;
+		overflow: visible;
 	}
-	
+
+	.hero {
+		@include centerChildren();
+		display: initial;
+		flex-direction: column;
+		overflow-y: visible;
+		z-index: -1;
+
+		
+		* {
+			position: initial;
+			right: initial;
+			width: 100%; height: 100%;
+			background-position: center;
+		};
+	}
+	.hero__bg {
+		position: fixed;
+    background-image: url("./images/bg-pattern-mobile.svg");
+    background-position-y: top;
+    left: 0;
+    background-size: 60%;
+	}
+	.hero__fg {
+		position: fixed;
+    top: -33%;
+    left: 0;
+    background-size: 60%;
+	}
+	.hero__box {
+		display: none;
+	}
+
+	.content {
+		flex: 3;
+		margin: 0;
+		h1 {
+			text-align: center;
+			margin-top: 0;
+			margin-bottom: 1rem;
+		}
+		ul {
+			margin-left: 2rem;
+			margin-right: 0.5rem;
+			position: absolute;
+			max-height: 55%;
+		}
+	}
 }
